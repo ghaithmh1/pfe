@@ -3,6 +3,8 @@ package com.pfe.prj1.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -23,12 +25,13 @@ public class Utilisateur {
     private String email;
 
     @NotEmpty(message = "Le mot de passe ne peut pas être vide")
+    @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
     @Column(name = "mot_de_passe", nullable = false, length = 100)
     private String motDePasse;
 
     @NotEmpty(message = "Le rôle ne peut pas être vide")
-    @Column(name = "role", nullable = false, length = 50)
-    private String role;
+    @Column(nullable = false)
+    private String role = "USER";
 
     @ManyToOne
     @JoinColumn(name = "entreprise_id")
@@ -41,6 +44,16 @@ public class Utilisateur {
         this.nom = nom;
         this.email = email;
         this.motDePasse = motDePasse;
-        this.role = role;
+        this.role ="USER";
+    }
+
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

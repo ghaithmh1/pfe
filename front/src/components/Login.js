@@ -8,24 +8,22 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Configure Axios to include credentials
-    axios.defaults.withCredentials = true;
-
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/auth/login',
-                { email, password }
+                'http://localhost:8080/utilisateurs/login',
+                { email, motDePasse: password }
             );
             
             if (response.data) {
+                // Store token and set auth header
                 localStorage.setItem('token', response.data);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
                 navigate('/dashboard');
             }
         } catch (err) {
-            setError('Invalid email or password');
-            console.error('Login error:', err);
+            setError(err.response?.data || 'Invalid email or password');
         }
     };
 

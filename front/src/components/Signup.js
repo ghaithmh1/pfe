@@ -12,15 +12,16 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/auth/signup", {
+      // Update endpoint to match backend
+      await axios.post("http://localhost:8080/utilisateurs/register", {
         nom: name,
         email,
         motDePasse: password,
         role: "USER",
       });
-      navigate("/login"); // Redirect to the login page
+      navigate("/login");
     } catch (err) {
-      setError("Error during signup. Please try again.");
+      setError(err.response?.data || "Error during signup. Please try again.");
     }
   };
 
