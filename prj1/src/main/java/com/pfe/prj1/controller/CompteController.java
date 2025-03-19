@@ -1,46 +1,50 @@
 package com.pfe.prj1.controller;
 
 import com.pfe.prj1.model.Compte;
-import com.pfe.prj1.repository.CompteRepository;
+import com.pfe.prj1.service.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/compte")
 public class CompteController {
 
     @Autowired
-    private CompteRepository compteRepository;
+    private CompteService compteService;
 
     @GetMapping
-    public List<Compte> getAllComptes() {
-        return compteRepository.findAll();
-    }
-
-    @PostMapping
-    public Compte createCompte(@RequestBody Compte compte) {
-        return compteRepository.save(compte);
+    public ResponseEntity<List<Compte>> getAllComptes() {
+        return ResponseEntity.ok(compteService.getAllComptes());
     }
 
     @GetMapping("/{id}")
-    public Compte getCompteById(@PathVariable int id) {
-        return compteRepository.findById(id).orElse(null);
+    public ResponseEntity<Compte> getCompteById(@PathVariable int id) {
+        Optional<Compte> compte = compteService.getCompteById(id);
+        return compte.map(ResponseEntity::ok)
+                     .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Compte> createCompte(@RequestBody Compte compte) {
+        return ResponseEntity.ok(compteService.createCompte(compte));
     }
 
     @PutMapping("/{id}")
-    public Compte updateCompte(@PathVariable int id, @RequestBody Compte compteDetails) {
-        Compte compte = compteRepository.findById(id).orElse(null);
-        if (compte != null) {
-            compte.setNom(compteDetails.getNom());
-            return compteRepository.save(compte);
-        }
-        return null;
+    public ResponseEntity<Compte> updateCompte(@PathVariable int id, @RequestBody Compte compteDetails) {
+        Optional<Compte> updatedCompte = compteService.updateCompte(id, compteDetails);
+        return updatedCompte.map(ResponseEntity::ok)
+                            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCompte(@PathVariable int id) {
-        compteRepository.deleteById(id);
+    public ResponseEntity<Void> deleteCompte(@PathVariable int id) {
+        if (compteService.deleteCompte(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

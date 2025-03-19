@@ -1,6 +1,7 @@
 package com.pfe.prj1.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import java.util.List;
@@ -13,7 +14,7 @@ public class Classe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotEmpty(message = "Le nom de la classe ne peut pas être vide")
+    @NotBlank(message = "Le nom de la classe ne peut pas être vide")
     @Column(name = "nom", nullable = false, length = 100)
     private String nom;
 

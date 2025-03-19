@@ -1,50 +1,42 @@
 package com.pfe.prj1.controller;
 
 import com.pfe.prj1.model.EcritureComptable;
-import com.pfe.prj1.repository.EcritureComptableRepository;
+import com.pfe.prj1.service.EcritureComptableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/ecriture-comptable")
 public class EcritureComptableController {
 
     @Autowired
-    private EcritureComptableRepository ecritureComptableRepository;
+    private EcritureComptableService ecritureComptableService;
 
     @GetMapping
     public List<EcritureComptable> getAllEcrituresComptables() {
-        return ecritureComptableRepository.findAll();
+        return ecritureComptableService.getAllEcrituresComptables();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<EcritureComptable> getEcritureComptableById(@PathVariable int id) {
+        return ecritureComptableService.getEcritureComptableById(id);
     }
 
     @PostMapping
     public EcritureComptable createEcritureComptable(@RequestBody EcritureComptable ecritureComptable) {
-        return ecritureComptableRepository.save(ecritureComptable);
-    }
-
-    @GetMapping("/{id}")
-    public EcritureComptable getEcritureComptableById(@PathVariable int id) {
-        return ecritureComptableRepository.findById(id).orElse(null);
+        return ecritureComptableService.createEcritureComptable(ecritureComptable);
     }
 
     @PutMapping("/{id}")
     public EcritureComptable updateEcritureComptable(@PathVariable int id, @RequestBody EcritureComptable ecritureComptableDetails) {
-        EcritureComptable ecritureComptable = ecritureComptableRepository.findById(id).orElse(null);
-        if (ecritureComptable != null) {
-            ecritureComptable.setNum(ecritureComptableDetails.getNum());
-            ecritureComptable.setReference(ecritureComptableDetails.getReference());
-            ecritureComptable.setStatut(ecritureComptableDetails.getStatut());
-            ecritureComptable.setDate(ecritureComptableDetails.getDate());
-            ecritureComptable.setMontant(ecritureComptableDetails.getMontant());
-            return ecritureComptableRepository.save(ecritureComptable);
-        }
-        return null;
+        return ecritureComptableService.updateEcritureComptable(id, ecritureComptableDetails);
     }
 
     @DeleteMapping("/{id}")
     public void deleteEcritureComptable(@PathVariable int id) {
-        ecritureComptableRepository.deleteById(id);
+        ecritureComptableService.deleteEcritureComptable(id);
     }
 }

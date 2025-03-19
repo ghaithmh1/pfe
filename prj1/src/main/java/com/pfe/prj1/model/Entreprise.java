@@ -50,7 +50,7 @@ public class Entreprise {
     private String templateSpecifique;
     private String type;
     private String ville;
-    private int devise;
+    private String devise;
     private int idPays;
     private boolean showCodeBarre;
 

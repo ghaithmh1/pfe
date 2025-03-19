@@ -1,8 +1,8 @@
 package com.pfe.prj1.controller;
 
 import com.pfe.prj1.model.Classe;
-import com.pfe.prj1.repository.ClasseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pfe.prj1.service.ClasseService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,36 +11,41 @@ import java.util.List;
 @RequestMapping("/classe")
 public class ClasseController {
 
-    @Autowired
-    private ClasseRepository classeRepository;
+    private final ClasseService classeService;
+
+    public ClasseController(ClasseService classeService) {
+        this.classeService = classeService;
+    }
 
     @GetMapping
-    public List<Classe> getAllClasses() {
-        return classeRepository.findAll();
+    public ResponseEntity<List<Classe>> getAllClasses() {
+        return ResponseEntity.ok(classeService.getAllClasses());
     }
 
     @PostMapping
-    public Classe createClasse(@RequestBody Classe classe) {
-        return classeRepository.save(classe);
+    public ResponseEntity<Classe> createClasse(@RequestBody Classe classe) {
+        return ResponseEntity.ok(classeService.createClasse(classe));
     }
 
     @GetMapping("/{id}")
-    public Classe getClasseById(@PathVariable int id) {
-        return classeRepository.findById(id).orElse(null);
+    public ResponseEntity<Classe> getClasseById(@PathVariable int id) {
+        return classeService.getClasseById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public Classe updateClasse(@PathVariable int id, @RequestBody Classe classeDetails) {
-        Classe classe = classeRepository.findById(id).orElse(null);
-        if (classe != null) {
-            classe.setNom(classeDetails.getNom());
-            return classeRepository.save(classe);
-        }
-        return null;
+    public ResponseEntity<Classe> updateClasse(@PathVariable int id, @RequestBody Classe classeDetails) {
+        return classeService.updateClasse(id, classeDetails)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteClasse(@PathVariable int id) {
-        classeRepository.deleteById(id);
+    public ResponseEntity<Void> deleteClasse(@PathVariable int id) {
+        if (classeService.deleteClasse(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
